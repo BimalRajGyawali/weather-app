@@ -1,8 +1,12 @@
 import './App.css';
+import WeatherViewer from "./components/WeatherViewer";
 
 function App() {
   return (
-    <h1>Hello</h1>
+      <>
+        <WeatherViewer />
+      </>
+
   );
 }
 
