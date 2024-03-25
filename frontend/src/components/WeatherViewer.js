@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Container, Typography, Card, CardContent, Divider} from '@mui/material';
+import {Container, Typography, Card, CardContent, Divider, Grid} from '@mui/material';
 import {WiThermometer, WiHumidity, WiStrongWind} from 'react-icons/wi'; // Import icons from react-icons library
 
 import './weatherviewer.css'
@@ -105,19 +105,17 @@ const WeatherViewer = () => {
                         </Typography>
                         <Divider style={{marginBottom: '30px', marginTop: '10px'}}/>
 
-                        {
-                            currentWeatherError ? <p>{currentWeatherError}</p>
+                        {currentWeatherError ? (
+                            <p>{currentWeatherError}</p>
+                        ) : (
+                            <>
+                                <Typography variant="h5" gutterBottom style={{marginBottom: '30px'}}>
+                                    {currentWeather.location}, {currentWeather.time}
+                                </Typography>
 
-                                :
-                                <>
-                                    <Typography variant="h5" gutterBottom style={{marginBottom: '30px'}}>
-                                        {currentWeather.location}, {currentWeather.time}
-                                    </Typography>
-
-                                    <div style={{display: 'flex'}}>
-
-                                        <div style={{display: 'flex', marginRight: '100px', alignItems: 'center'}}>
-
+                                <Grid container spacing={3}> {/* Use Grid container for responsiveness */}
+                                    <Grid item xs={12} md={6} lg={6}> {/* Specify grid item width for different screen sizes */}
+                                        <div style={{display: 'flex', alignItems: 'center'}}>
                                             <img src={`http://openweathermap.org/img/w/${currentWeather.icon}.png`}
                                                  alt="Weather Icon"
                                                  style={{width: '72px', height: '72px', border: '1px solid gray'}}/>
@@ -126,24 +124,19 @@ const WeatherViewer = () => {
                                                 <Typography variant="h4" gutterBottom
                                                             style={{fontWeight: 'bold', marginLeft: '25px', letterSpacing: '-.7px'}}>
                                                     {currentWeather.temperature}°
-
                                                     <span style={{fontSize: '0.5em', color: 'gray'}}>C</span>
                                                 </Typography>
 
                                                 <Typography variant="h8" gutterBottom
                                                             style={{marginLeft: '25px', fontSize: '1.2em', color: 'gray'}}>
                                                     {currentWeather.desc}
-
                                                 </Typography>
-
                                             </div>
                                         </div>
+                                    </Grid>
 
-
-
-                                        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-
-
+                                    <Grid item xs={12} md={6} lg={6}> {/* Specify grid item width for different screen sizes */}
+                                        <div style={{display: 'flex', flexDirection: 'column'}}>
                                             <div style={{display: 'flex', alignItems: 'center'}}>
                                                 <Typography variant="subtitle1" gutterBottom style={{marginRight: '8px'}}>
                                                     Feels Like:
@@ -152,20 +145,16 @@ const WeatherViewer = () => {
                                                     {currentWeather.feelsLike}°C
                                                 </Typography>
                                             </div>
-
                                             <Divider style={{margin: '10px 0'}} />
-
                                             <div style={{display: 'flex', alignItems: 'center'}}>
                                                 <Typography variant="subtitle1" gutterBottom style={{marginRight: '8px'}}>
-                                                    Humidity: <WiHumidity style={{fontSize: '24px'}}/>
+                                                    Humidity: <WiHumidity style={{fontSize: '24px', position: 'relative', top: '4px'}}/>
                                                 </Typography>
                                                 <Typography variant="subtitle1" gutterBottom style={{fontWeight: 'bold'}}>
                                                     {currentWeather.humidity}%
                                                 </Typography>
                                             </div>
-
                                             <Divider style={{margin: '10px 0'}} />
-
                                             <div style={{display: 'flex', alignItems: 'center'}}>
                                                 <Typography variant="subtitle1" gutterBottom style={{marginRight: '8px'}}>
                                                     Wind Speed:
@@ -174,21 +163,13 @@ const WeatherViewer = () => {
                                                     {currentWeather.windSpeed} m/s
                                                 </Typography>
                                             </div>
-
-
                                         </div>
-
-                                    </div>
-
-                                </>
-
-
-
-
-                        }
+                                    </Grid>
+                                </Grid>
+                            </>
+                        )}
                     </CardContent>
                 </Card>
-
                 <Card className="" style={{marginBottom: '20px'}}>
                     <CardContent>
                         <Typography variant="h8" gutterBottom style={{fontWeight: 'bold', color: 'gray'}}>
