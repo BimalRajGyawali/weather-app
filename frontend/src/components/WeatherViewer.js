@@ -8,32 +8,6 @@ import urlConstants from "../constants/UrlConstants";
 import UrlConstants from "../constants/UrlConstants";
 
 
-const dummyHourlyForecast = [
-    {time: '12 PM', temperature: 26, icon: '01d'},
-    {time: '1 PM', temperature: 27, icon: '02d'},
-    {time: '2 PM', temperature: 28, icon: '03d'},
-    {time: '12 PM', temperature: 26, icon: '01d'},
-    {time: '1 PM', temperature: 27, icon: '02d'},
-    {time: '2 PM', temperature: 28, icon: '03d'},
-    {time: '12 PM', temperature: 26, icon: '01d'},
-    {time: '12 PM', temperature: 26, icon: '01d'},
-    {time: '1 PM', temperature: 27, icon: '02d'},
-    {time: '2 PM', temperature: 28, icon: '03d'},
-    {time: '12 PM', temperature: 26, icon: '01d'},
-    {time: '1 PM', temperature: 27, icon: '02d'},
-    {time: '2 PM', temperature: 28, icon: '03d'},
-    {time: '12 PM', temperature: 26, icon: '01d'},
-    {time: '12 PM', temperature: 26, icon: '01d'},
-    {time: '1 PM', temperature: 27, icon: '02d'},
-    {time: '2 PM', temperature: 28, icon: '03d'},
-    {time: '12 PM', temperature: 26, icon: '01d'},
-    {time: '1 PM', temperature: 27, icon: '02d'},
-    {time: '2 PM', temperature: 28, icon: '03d'},
-    {time: '12 PM', temperature: 26, icon: '01d'},
-
-    // Add more dummy hourly forecast data
-];
-
 const dummyDailyForecast = [
     {day: 'Mon', temperature: {min: 20, max: 28}, icon: '01d'},
     {day: 'Tue', temperature: {min: 22, max: 30}, icon: '02d'},
@@ -55,6 +29,7 @@ const WeatherViewer = () => {
     const [currentWeatherError, setCurrentWeatherError] = useState('')
 
     const [currentWeather, setCurrentWeather] = useState({})
+    const [hourlyWeather, setHourlyWeather] = useState([])
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -71,10 +46,10 @@ const WeatherViewer = () => {
                             time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
                             temperature: weatherData.temperature,
                             humidity: weatherData.humidity,
-                            windSpeed: weatherData.wind_speed,
+                            windSpeed: weatherData.windSpeed,
                             icon: weatherData.icon,
                             desc: weatherData.desc,
-                            feelsLike: weatherData.feels_like
+                            feelsLike: weatherData.feelsLike
                         };
 
                         setCurrentWeather(currentWeather)
@@ -84,6 +59,17 @@ const WeatherViewer = () => {
                         console.error('Error fetching weather data:', error.response ? error.response.data : error.message);
                         setCurrentWeatherError('Error fetching weather data from server. Please contact support.')
                     });
+
+
+
+                axios.get(`${UrlConstants.HOST}/hourly-forecast?lat=${latitude}&lon=${longitude}`)
+                    .then(response => {
+                        console.log('Hourly forecast:', response.data);
+                        setHourlyWeather(response.data)
+                    })
+                    .catch(error => {
+                        console.error('Error fetching weather data:', error.response ? error.response.data : error.message);
+                        setCurrentWeatherError('Error fetching weather data from server. Please contact support.')                    });
 
 
             }, (error) => {
@@ -173,7 +159,7 @@ const WeatherViewer = () => {
                 <Card className="" style={{marginBottom: '20px'}}>
                     <CardContent>
                         <Typography variant="h8" gutterBottom style={{fontWeight: 'bold', color: 'gray'}}>
-                            Hourly Forecast
+                            Hourly Forecast - 24 Hours
                         </Typography>
                         <Divider style={{marginBottom: '30px', marginTop: '10px'}}/>
                         <div
@@ -181,15 +167,15 @@ const WeatherViewer = () => {
                                 display: 'flex',
                                 overflowX: 'auto',
                                 justifyContent: 'flex-start',
-                                marginBottom: '20px'
+                                marginBottom: '0px'
                             }}
                             className='custom-scrollbar'
 
                         >
 
-                            {dummyHourlyForecast.map((hour, index) => (
+                            {hourlyWeather.map((hour, index) => (
                                 <div key={index} style={{
-                                    marginRight: '40px',
+                                    marginRight: '50px',
                                     marginBottom: '30px',
                                     textAlign: 'center',
                                     cursor: 'pointer',
@@ -202,8 +188,13 @@ const WeatherViewer = () => {
                                         {hour.time}
                                     </Typography>
 
+                                    <Typography variant="h8" gutterBottom
+                                                style={{marginTop: '3px', color: 'gray', fontSize: '0.8em'}}>
+                                        {hour.date}
+                                    </Typography>
+
                                     <img src={`http://openweathermap.org/img/w/${hour.icon}.png`} alt="Weather Icon"
-                                         style={{width: '48px', height: '48px', margin: ''}}/>
+                                         style={{width: '48px', height: '48px', marginTop: '10px'}}/>
 
                                     <Typography variant="h8" gutterBottom style={{fontSize: '1.2em'}}>
                                         {hour.temperature}°
@@ -217,7 +208,7 @@ const WeatherViewer = () => {
                                         fontSize: '0.8em'
                                     }}>
                                         <WiHumidity size={24} style={{}}/>
-                                        <span> 70  </span>
+                                        <span> {hour.humidity} % </span>
                                     </div>
 
 
