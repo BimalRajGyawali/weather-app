@@ -1,3 +1,4 @@
+import json
 import logging
 import math
 
@@ -7,6 +8,7 @@ from flask_cors import CORS
 
 import constants
 import helper
+import redis
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
@@ -14,6 +16,7 @@ CORS(app, origins=["http://localhost:3000"])
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+redis_client = redis.Redis(host=constants.REDIS_HOST, port=constants.REDIS_PORT, db=0)
 
 @app.route('/weather', methods=['GET'])
 def get_weather():
@@ -69,6 +72,15 @@ def get_forecast():
     if not latitude or not longitude:
         return jsonify({'error': 'Latitude and longitude are required parameters.'}), 400
 
+    # Generate cache key from latitude and longitude
+    cache_key = f"{latitude}_{longitude}"
+
+    # Check if data is cached in Redis
+    cached_data = redis_client.get(cache_key)
+    if cached_data:
+        print("===\n==Getting from redis\n\n==")
+        return cached_data
+
     # Construct the API URL
     url = f"{constants.OPEN_WEATHER_MAP_ONECALL_URL}?lat={latitude}&lon={longitude}&appid={constants.OPEN_WEATHER_MAP_API_KEY}&units=metric"
 
@@ -89,8 +101,9 @@ def get_forecast():
                 'temperature': math.floor(hour['temp']),
                 'desc': hour['weather'][0]['description'],
                 'icon': hour['weather'][0]['icon'],
-
-                'humidity': hour['humidity']
+                'humidity': hour['humidity'],
+                'timezone': timezone,
+                'dt': hour['dt']
             })
 
         # Extract and map daily data
@@ -113,6 +126,17 @@ def get_forecast():
 
         mapped_hourly_data = mapped_hourly_data[:24]  # only for next 24 hours
 
+        # Calculate expiration time for caching
+        if mapped_hourly_data:
+            first_element = mapped_hourly_data[0]
+
+            expiration_time_delta = helper.current_datetime_from_timezone(timezone) - helper.convert_unix_to_datetime(first_element['dt'], timezone=timezone)
+            expiration_time_secs = int(3600 - expiration_time_delta.total_seconds())
+
+            # Cache the response data in Redis for one hour
+            redis_client.setex(cache_key, expiration_time_secs, bytes(json.dumps({'hourly': mapped_hourly_data, 'daily': mapped_daily_data}), 'utf-8'))
+
+        # Return the response data
         return jsonify({
             'hourly': mapped_hourly_data,
             'daily': mapped_daily_data
@@ -120,6 +144,7 @@ def get_forecast():
     except requests.RequestException as e:
         return jsonify({'error': 'Failed to fetch hourly forecast data. Please try again later.'}), 500
     except Exception as e:
+        logger.error(e)
         return jsonify({'error': 'An unexpected error occurred. Please contact the server administrator.'}), 500
 
 

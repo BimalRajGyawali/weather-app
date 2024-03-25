@@ -18,3 +18,11 @@ def extract_from_datetime(unix_timestamp, timezone, date_to_today=False, day_to_
         day_str = "TODAY"
 
     return date_str, time_str, day_str
+
+
+def convert_unix_to_datetime(unix_timestamp, timezone):
+    return datetime.datetime.fromtimestamp(unix_timestamp, pytz.timezone(timezone))
+
+
+def current_datetime_from_timezone(timezone):
+    return datetime.datetime.now(pytz.timezone(timezone))
