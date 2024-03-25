@@ -1,5 +1,5 @@
-import datetime
 import logging
+import math
 
 import requests
 from flask import Flask, request, jsonify
@@ -33,7 +33,7 @@ def get_weather():
         # Extracting required fields
         location_name = data.get('name')
         feels_like = data['main']['feels_like']
-        temperature = data['main']['temp']
+        temperature = math.floor(data['main']['temp'])
         humidity = data['main']['humidity']
         wind_speed = data['wind']['speed']
         weather_icon = data['weather'][0]['icon']
@@ -62,7 +62,7 @@ def get_weather():
 
 
 @app.route('/hourly-forecast', methods=['GET'])
-def get_hourly_forecast():
+def get_forecast():
     latitude = request.args.get('lat')
     longitude = request.args.get('lon')
 
@@ -77,25 +77,45 @@ def get_hourly_forecast():
         response.raise_for_status()
         data = response.json()
 
-        current_time = datetime.datetime.now()
-        timezone_offset = data['timezone_offset']
         timezone = data['timezone']
 
         mapped_hourly_data = []
         for hour in data['hourly']:
-            date, time = helper.unix_to_datetime(hour['dt'], timezone)
+            date, time, _ = helper.extract_from_datetime(hour['dt'], timezone, date_to_today=True, day_to_today=True)
             mapped_hourly_data.append({
                 'date': date,
                 'time': time,
-                'temperature': hour['temp'],
+                'temperature': math.floor(hour['temp']),
                 'desc': hour['weather'][0]['description'],
                 'icon': hour['weather'][0]['icon'],
 
                 'humidity': hour['humidity']
             })
 
+        mapped_daily_data = []
+
+        for day in data['daily']:
+            date, time, week_day = helper.extract_from_datetime(day['dt'], timezone, day_to_today=True)
+            mapped_daily_data.append({
+                'date': date,
+                'day': week_day,
+                'temperature': {
+                    'min': math.floor(day['temp']['min']),
+                    'max': math.floor(day['temp']['max']),
+                },
+                'humidity': day['humidity'],
+
+                'desc': day['weather'][0]['description'],
+                'icon': day['weather'][0]['icon'],
+                'summary': day['summary']
+            })
+
         mapped_hourly_data = mapped_hourly_data[:24]  # only for next 24 hours
-        return jsonify(mapped_hourly_data)
+
+        return jsonify({
+            'hourly': mapped_hourly_data,
+            'daily': mapped_daily_data
+        })
     except requests.RequestException as e:
         return jsonify({'error': 'Failed to fetch hourly forecast data. Please try again later.'}), 500
     except Exception as e:
