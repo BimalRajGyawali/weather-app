@@ -69,16 +69,17 @@ def get_forecast():
     if not latitude or not longitude:
         return jsonify({'error': 'Latitude and longitude are required parameters.'}), 400
 
-    # Make request to Open Meteo API
+    # Construct the API URL
     url = f"{constants.OPEN_WEATHER_MAP_ONECALL_URL}?lat={latitude}&lon={longitude}&appid={constants.OPEN_WEATHER_MAP_API_KEY}&units=metric"
 
+    # Fetch forecast data from the API
     try:
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
-
         timezone = data['timezone']
 
+        # Extract and map hourly data
         mapped_hourly_data = []
         for hour in data['hourly']:
             date, time, _ = helper.extract_from_datetime(hour['dt'], timezone, date_to_today=True, day_to_today=True)
@@ -92,8 +93,8 @@ def get_forecast():
                 'humidity': hour['humidity']
             })
 
+        # Extract and map daily data
         mapped_daily_data = []
-
         for day in data['daily']:
             date, time, week_day = helper.extract_from_datetime(day['dt'], timezone, day_to_today=True)
             mapped_daily_data.append({
