@@ -1,16 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Container, Typography, Card, CardContent, Divider, Grid} from '@mui/material';
-import {WiThermometer, WiHumidity, WiStrongWind} from 'react-icons/wi'; // Import icons from react-icons library
-
-import './weatherviewer.css'
+import {Card, CardContent, Container, Divider, Grid, Typography} from '@mui/material';
+import {WiHumidity} from 'react-icons/wi'; // Import icons from react-icons library
 import axios from "axios";
 import UrlConstants from "../constants/UrlConstants";
 
 
 const WeatherViewer = () => {
-    const [userLocation, setUserLocation] = useState(null);
     const [currentWeatherError, setCurrentWeatherError] = useState('')
-
     const [currentWeather, setCurrentWeather] = useState({})
     const [hourlyWeather, setHourlyWeather] = useState([])
     const [dailyWeather, setDailyWeather] = useState([])
@@ -19,7 +15,6 @@ const WeatherViewer = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((position) => {
                 const { latitude, longitude } = position.coords;
-                setUserLocation({ latitude, longitude });
 
                 axios.get(`${UrlConstants.HOST}/weather?lat=${latitude}&lon=${longitude}`)
                     .then(response => {
@@ -45,8 +40,7 @@ const WeatherViewer = () => {
                     });
 
 
-
-                axios.get(`${UrlConstants.HOST}/hourly-forecast?lat=${latitude}&lon=${longitude}`)
+                axios.get(`${UrlConstants.HOST}/forecast?lat=${latitude}&lon=${longitude}`)
                     .then(response => {
                         setHourlyWeather(response.data.hourly)
                         setDailyWeather(response.data.daily)

@@ -61,7 +61,7 @@ def get_weather():
         return jsonify({'error': 'An unexpected error occurred. Please contact the server administrator.'}), 500
 
 
-@app.route('/hourly-forecast', methods=['GET'])
+@app.route('/forecast', methods=['GET'])
 def get_forecast():
     latitude = request.args.get('lat')
     longitude = request.args.get('lon')
