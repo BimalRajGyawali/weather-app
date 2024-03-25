@@ -114,7 +114,7 @@ const WeatherViewer = () => {
                                         {currentWeather.location}, {currentWeather.time}
                                     </Typography>
 
-                                    <div style={{display: 'flex', flexDirection: 'row'}}>
+                                    <div style={{display: 'flex'}}>
 
                                         <div style={{display: 'flex', marginRight: '100px', alignItems: 'center'}}>
 
@@ -124,32 +124,60 @@ const WeatherViewer = () => {
 
                                             <div>
                                                 <Typography variant="h4" gutterBottom
-                                                            style={{fontWeight: 'bold', marginLeft: '25px'}}>
-                                                    {currentWeather.temperature}°<span
-                                                    style={{fontSize: '0.5em', color: 'gray'}}>C</span>
+                                                            style={{fontWeight: 'bold', marginLeft: '25px', letterSpacing: '-.7px'}}>
+                                                    {currentWeather.temperature}°
+
+                                                    <span style={{fontSize: '0.5em', color: 'gray'}}>C</span>
                                                 </Typography>
+
+                                                <Typography variant="h8" gutterBottom
+                                                            style={{marginLeft: '25px', fontSize: '1.2em', color: 'gray'}}>
+                                                    {currentWeather.desc}
+
+                                                </Typography>
+
                                             </div>
                                         </div>
 
 
-                                        <div style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            marginBottom: '10px',
-                                            marginRight: '60px'
-                                        }}>
-                                            <WiHumidity size={32} style={{marginRight: '8px'}}/>
-                                            <Typography variant="h8" gutterBottom style={{fontSize: '1.2em'}}>
-                                                {currentWeather.humidity}%
-                                            </Typography>
+
+                                        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+
+
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <Typography variant="subtitle1" gutterBottom style={{marginRight: '8px'}}>
+                                                    Feels Like:
+                                                </Typography>
+                                                <Typography variant="subtitle1" gutterBottom style={{fontWeight: 'bold'}}>
+                                                    {currentWeather.feelsLike}°C
+                                                </Typography>
+                                            </div>
+
+                                            <Divider style={{margin: '10px 0'}} />
+
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <Typography variant="subtitle1" gutterBottom style={{marginRight: '8px'}}>
+                                                    Humidity: <WiHumidity style={{fontSize: '24px'}}/>
+                                                </Typography>
+                                                <Typography variant="subtitle1" gutterBottom style={{fontWeight: 'bold'}}>
+                                                    {currentWeather.humidity}%
+                                                </Typography>
+                                            </div>
+
+                                            <Divider style={{margin: '10px 0'}} />
+
+                                            <div style={{display: 'flex', alignItems: 'center'}}>
+                                                <Typography variant="subtitle1" gutterBottom style={{marginRight: '8px'}}>
+                                                    Wind Speed:
+                                                </Typography>
+                                                <Typography variant="subtitle1" gutterBottom style={{fontWeight: 'bold'}}>
+                                                    {currentWeather.windSpeed} m/s
+                                                </Typography>
+                                            </div>
+
+
                                         </div>
 
-                                        <div style={{display: 'flex', alignItems: 'center'}}>
-                                            <WiStrongWind size={32} style={{marginRight: '8px'}}/>
-                                            <Typography variant="h8" gutterBottom style={{fontSize: '1.2em'}}>
-                                                {isSecureContext.windSpeed} m/s
-                                            </Typography>
-                                        </div>
                                     </div>
 
                                 </>

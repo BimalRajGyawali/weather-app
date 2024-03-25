@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify
 import requests
 import logging
+from flask_cors import CORS
+
 
 import constants
 
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"])
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,6 +34,8 @@ def get_weather():
         temperature = data['main']['temp']
         humidity = data['main']['humidity']
         wind_speed = data['wind']['speed']
+        weather_icon = data['weather'][0]['icon']
+        weather_desc = data['weather'][0]['description']
 
         # Constructing response
         weather_data = {
@@ -38,7 +43,9 @@ def get_weather():
             'feels_like': feels_like,
             'temperature': temperature,
             'humidity': humidity,
-            'wind_speed': wind_speed
+            'wind_speed': wind_speed,
+            'icon': weather_icon,
+            'desc': weather_desc
         }
 
         return jsonify(weather_data)
