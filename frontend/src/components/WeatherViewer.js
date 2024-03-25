@@ -77,6 +77,7 @@ const WeatherViewer = () => {
                 console.error('Error getting user location:', error);
             });
         } else {
+            setCurrentWeatherError('Geolocation is not supported by this browser.')
             console.error('Geolocation is not supported by this browser.');
         }
     }, []);
@@ -162,59 +163,67 @@ const WeatherViewer = () => {
                             Hourly Forecast - 24 Hours
                         </Typography>
                         <Divider style={{marginBottom: '30px', marginTop: '10px'}}/>
-                        <div
-                            style={{
-                                display: 'flex',
-                                overflowX: 'auto',
-                                justifyContent: 'flex-start',
-                                marginBottom: '0px'
-                            }}
-                            className='custom-scrollbar'
 
-                        >
+                        {currentWeatherError ? (
+                            <p>{currentWeatherError}</p>
+                        ) : <>
 
-                            {hourlyWeather.map((hour, index) => (
-                                <div key={index} style={{
-                                    marginRight: '50px',
-                                    marginBottom: '30px',
-                                    textAlign: 'center',
-                                    cursor: 'pointer',
+                            <div
+                                style={{
                                     display: 'flex',
-                                    flexDirection: 'column'
-                                }}>
+                                    overflowX: 'auto',
+                                    justifyContent: 'flex-start',
+                                    marginBottom: '0px'
+                                }}
+                                className='custom-scrollbar'
 
-                                    <Typography variant="h8" gutterBottom
-                                                style={{fontWeight: 'bold', color: 'gray', fontSize: '0.8em'}}>
-                                        {hour.time}
-                                    </Typography>
+                            >
 
-                                    <Typography variant="h8" gutterBottom
-                                                style={{marginTop: '3px', color: 'gray', fontSize: '0.8em'}}>
-                                        {hour.date}
-                                    </Typography>
-
-                                    <img src={`http://openweathermap.org/img/w/${hour.icon}.png`} alt="Weather Icon"
-                                         style={{width: '48px', height: '48px', marginTop: '10px'}}/>
-
-                                    <Typography variant="h8" gutterBottom style={{fontSize: '1.2em'}}>
-                                        {hour.temperature}°
-                                    </Typography>
-
-                                    <div style={{
+                                {hourlyWeather.map((hour, index) => (
+                                    <div key={index} style={{
+                                        marginRight: '50px',
+                                        marginBottom: '30px',
+                                        textAlign: 'center',
+                                        cursor: 'pointer',
                                         display: 'flex',
-                                        alignItems: 'center',
-                                        marginTop: '15px',
-                                        color: 'gray',
-                                        fontSize: '0.8em'
+                                        flexDirection: 'column'
                                     }}>
-                                        <WiHumidity size={24} style={{}}/>
-                                        <span> {hour.humidity} % </span>
+
+                                        <Typography variant="h8" gutterBottom
+                                                    style={{fontWeight: 'bold', color: 'gray', fontSize: '0.8em', width: '60px'}}>
+                                            {hour.time}
+                                        </Typography>
+
+                                        <Typography variant="h8" gutterBottom
+                                                    style={{marginTop: '3px', color: 'gray', fontSize: '0.8em'}}>
+                                            {hour.date}
+                                        </Typography>
+
+                                        <img src={`http://openweathermap.org/img/w/${hour.icon}.png`} alt="Weather Icon"
+                                             style={{width: '48px', height: '48px', marginTop: '10px'}}/>
+
+                                        <Typography variant="h8" gutterBottom style={{fontSize: '1.2em'}}>
+                                            {hour.temperature}°
+                                        </Typography>
+
+                                        <div style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginTop: '15px',
+                                            color: 'gray',
+                                            fontSize: '0.8em'
+                                        }}>
+                                            <WiHumidity size={24} style={{}}/>
+                                            <span> {hour.humidity} % </span>
+                                        </div>
+
+
                                     </div>
+                                ))}
+                            </div>
+                        </>
 
-
-                                </div>
-                            ))}
-                        </div>
+                        }
                     </CardContent>
                 </Card>
 
