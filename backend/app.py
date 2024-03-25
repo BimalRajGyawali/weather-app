@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 import requests
@@ -5,6 +6,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 import constants
+import helper
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"])
@@ -40,10 +42,10 @@ def get_weather():
         # Constructing response
         weather_data = {
             'location': location_name,
-            'feels_like': feels_like,
+            'feelsLike': feels_like,
             'temperature': temperature,
             'humidity': humidity,
-            'wind_speed': wind_speed,
+            'windSpeed': wind_speed,
             'icon': weather_icon,
             'desc': weather_desc
         }
@@ -56,6 +58,47 @@ def get_weather():
 
     except Exception as e:
         logger.exception('An unexpected error occurred:')
+        return jsonify({'error': 'An unexpected error occurred. Please contact the server administrator.'}), 500
+
+
+@app.route('/hourly-forecast', methods=['GET'])
+def get_hourly_forecast():
+    latitude = request.args.get('lat')
+    longitude = request.args.get('lon')
+
+    if not latitude or not longitude:
+        return jsonify({'error': 'Latitude and longitude are required parameters.'}), 400
+
+    # Make request to Open Meteo API
+    url = f"{constants.OPEN_WEATHER_MAP_ONECALL_URL}?lat={latitude}&lon={longitude}&appid={constants.OPEN_WEATHER_MAP_API_KEY}&units=metric"
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+
+        current_time = datetime.datetime.now()
+        timezone_offset = data['timezone_offset']
+        timezone = data['timezone']
+
+        mapped_hourly_data = []
+        for hour in data['hourly']:
+            date, time = helper.unix_to_datetime(hour['dt'], timezone)
+            mapped_hourly_data.append({
+                'date': date,
+                'time': time,
+                'temperature': hour['temp'],
+                'desc': hour['weather'][0]['description'],
+                'icon': hour['weather'][0]['icon'],
+
+                'humidity': hour['humidity']
+            })
+
+        mapped_hourly_data = mapped_hourly_data[:24]  # only for next 24 hours
+        return jsonify(mapped_hourly_data)
+    except requests.RequestException as e:
+        return jsonify({'error': 'Failed to fetch hourly forecast data. Please try again later.'}), 500
+    except Exception as e:
         return jsonify({'error': 'An unexpected error occurred. Please contact the server administrator.'}), 500
 
 
