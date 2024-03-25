@@ -4,25 +4,8 @@ import {WiThermometer, WiHumidity, WiStrongWind} from 'react-icons/wi'; // Impor
 
 import './weatherviewer.css'
 import axios from "axios";
-import urlConstants from "../constants/UrlConstants";
 import UrlConstants from "../constants/UrlConstants";
 
-
-const dummyDailyForecast = [
-    {day: 'Mon', temperature: {min: 20, max: 28}, icon: '01d'},
-    {day: 'Tue', temperature: {min: 22, max: 30}, icon: '02d'},
-    {day: 'Wed', temperature: {min: 21, max: 29}, icon: '03d'},
-    {day: 'Thu', temperature: {min: 20, max: 28}, icon: '01d'},
-    {day: 'Fri', temperature: {min: 22, max: 30}, icon: '02d'},
-    {day: 'Sat', temperature: {min: 21, max: 29}, icon: '03d'},
-    {day: 'Mon', temperature: {min: 20, max: 28}, icon: '01d'},
-    {day: 'Tue', temperature: {min: 22, max: 30}, icon: '02d'},
-    {day: 'Wed', temperature: {min: 21, max: 29}, icon: '03d'},
-    {day: 'Thu', temperature: {min: 20, max: 28}, icon: '01d'},
-    {day: 'Fri', temperature: {min: 22, max: 30}, icon: '02d'},
-    {day: 'Sat', temperature: {min: 21, max: 29}, icon: '03d'},
-    // Add more dummy daily forecast data
-];
 
 const WeatherViewer = () => {
     const [userLocation, setUserLocation] = useState(null);
@@ -30,6 +13,7 @@ const WeatherViewer = () => {
 
     const [currentWeather, setCurrentWeather] = useState({})
     const [hourlyWeather, setHourlyWeather] = useState([])
+    const [dailyWeather, setDailyWeather] = useState([])
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -64,8 +48,8 @@ const WeatherViewer = () => {
 
                 axios.get(`${UrlConstants.HOST}/hourly-forecast?lat=${latitude}&lon=${longitude}`)
                     .then(response => {
-                        console.log('Hourly forecast:', response.data);
-                        setHourlyWeather(response.data)
+                        setHourlyWeather(response.data.hourly)
+                        setDailyWeather(response.data.daily)
                     })
                     .catch(error => {
                         console.error('Error fetching weather data:', error.response ? error.response.data : error.message);
@@ -160,7 +144,7 @@ const WeatherViewer = () => {
                 <Card className="" style={{marginBottom: '20px'}}>
                     <CardContent>
                         <Typography variant="h8" gutterBottom style={{fontWeight: 'bold', color: 'gray'}}>
-                            Hourly Forecast - 24 Hours
+                            Hourly Forecast
                         </Typography>
                         <Divider style={{marginBottom: '30px', marginTop: '10px'}}/>
 
@@ -212,7 +196,8 @@ const WeatherViewer = () => {
                                             marginTop: '15px',
                                             color: 'gray',
                                             fontSize: '0.8em'
-                                        }}>
+                                        }}
+                                             title="Humidity" >
                                             <WiHumidity size={24} style={{}}/>
                                             <span> {hour.humidity} % </span>
                                         </div>
@@ -230,62 +215,41 @@ const WeatherViewer = () => {
                 <Card className="">
                     <CardContent>
                         <Typography variant="h8" gutterBottom style={{fontWeight: 'bold', color: 'gray'}}>
-                            Daily Forecast
+                            7-Day Forecast
                         </Typography>
                         <Divider style={{marginBottom: '30px', marginTop: '10px'}}/>
-                        <div
-                            style={{
-                                display: 'flex',
-                                overflowX: 'auto',
-                                justifyContent: 'flex-start',
-                                marginBottom: '20px'
-                            }}
+                        <table style={{width: '', maxWidth: '100%'}}>
+                            <tbody>
+                            {dailyWeather.map((day, index) => (
+                                <tr key={index}>
+                                    <td style={{textAlign: 'center', width: '10%', borderBottom: index !== dailyWeather.length - 1 ? '1px solid lightgray' : ''}}>
+                                        <span style={{fontWeight: '', color: '', fontSize: '1.2em'}}>{day.day}</span>
+                                        <br />
+                                        <span style={{fontWeight: '', color: 'gray', fontSize: '0.8em'}}>{day.date}</span>
+                                    </td>
 
-                        >
+                                    <td style={{textAlign: 'center', width: '20%', marginLeft: '', borderBottom: index !== dailyWeather.length - 1 ? '1px solid lightgray' : ''}}>
+                                        <div style={{display: 'flex', alignItems: 'center'}}>
+                                            <img src={`http://openweathermap.org/img/w/${day.icon}.png`} alt="Weather Icon" style={{width: '64px', height: '64px', marginRight: '10px'}}/>
+                                            <div>
+                                                <span style={{fontSize: '1.5em', fontWeight: ''}}>{day.temperature.max}°</span>
+                                                <span style={{fontSize: '1em', marginLeft: '8px', color: '#36454F'}}>{day.temperature.min}°</span>
+                                            </div>
+                                        </div>
+                                    </td>
 
-                            {dummyDailyForecast.map((day, index) => (
-                                <div key={index} style={{
-                                    marginRight: '40px',
-                                    marginBottom: '30px',
-                                    textAlign: 'center',
-                                    cursor: 'pointer',
-                                    display: 'flex',
-                                    flexDirection: 'column'
-                                }}>
+                                    <td style={{textAlign: '', color: 'gray', fontSize: '0.8em', fontWeight: 'bold', width: '40%', borderBottom: index !== dailyWeather.length - 1 ? '1px solid lightgray' : ''}}>
+                                        <span> {day.summary} </span>
+                                    </td>
 
-                                    <Typography variant="h8" gutterBottom
-                                                style={{fontWeight: 'bold', color: 'gray', fontSize: '0.8em'}}>
-                                        {day.day}
-                                    </Typography>
-
-                                    <img src={`http://openweathermap.org/img/w/${day.icon}.png`} alt="Weather Icon"
-                                         style={{width: '48px', height: '48px', margin: ''}}/>
-
-                                    <div>
-                                        <Typography variant="h8" gutterBottom
-                                                    style={{fontSize: '1.5em', marginRight: '5px'}}>
-                                            {day.temperature.max}°
-                                        </Typography>
-                                        <Typography variant="h8" gutterBottom style={{fontSize: '1em'}}>
-                                            {day.temperature.min}°
-                                        </Typography>
-                                    </div>
-
-                                    <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        marginTop: '15px',
-                                        color: 'gray',
-                                        fontSize: '0.8em'
-                                    }}>
-                                        <WiHumidity size={24} style={{}}/>
-                                        <span> 70  </span>
-                                    </div>
-
-
-                                </div>
+                                    <td  title="Humidity" style={{textAlign: 'center', color: '', fontSize: '', width: '10%', borderBottom: index !== dailyWeather.length - 1 ? '1px solid lightgray' : ''}}>
+                                        <WiHumidity size={24} style={{position: 'relative', top: '4px'}}/>
+                                        <span> {day.humidity}% </span>
+                                    </td>
+                                </tr>
                             ))}
-                        </div>
+                            </tbody>
+                        </table>
                     </CardContent>
                 </Card>
 
