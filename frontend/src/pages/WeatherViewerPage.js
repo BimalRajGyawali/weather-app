@@ -28,7 +28,7 @@ const WeatherViewerPage = () => {
                     setDailyWeather(forecastData.daily);
 
                 } catch (error) {
-                    setCurrentWeatherError('Unable to fetch weather data. Please contact support')
+                    setCurrentWeatherError('Unable to fetch weather data. Please contact support.')
                 }
 
             } catch (error) {

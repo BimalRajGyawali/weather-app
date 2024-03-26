@@ -16,7 +16,7 @@ CORS(app, origins=["http://localhost:3000"])
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-redis_client = redis.Redis(host=constants.REDIS_HOST, port=constants.REDIS_PORT, db=0)
+redis_client = redis.Redis(host=constants.REDIS_SERVICE, port=constants.REDIS_PORT, db=0)
 
 @app.route('/weather', methods=['GET'])
 def get_weather():

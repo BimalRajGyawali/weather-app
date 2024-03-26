@@ -4,7 +4,11 @@
 
 [Features](#features)
 
+[Response to Errors](#response-to-errors)
+
 [Technology Stack](#technology-stack)
+
+[Running the project](#running-the-project)
 
 
 ### High Level Feature Flow:
@@ -37,6 +41,16 @@
 ![Daily Forecast](docs/feature3.png)
 
 
+### Response to Errors:
+
+
+1. Location not enabled from browser
+
+![location error](docs/error2.png)
+
+2. Server error
+
+![Server error](docs/error1.png)
 
 
 ### Technology Stack:
@@ -44,4 +58,14 @@
 2. Backend: Python, Flask
 3. Caching: Redis
 4. Weather API: OpenWeatherMap
+
+
+### Running the project
+
+The project can be run using following `docker-compose` command.
+
+`docker-compose up -d`
+
+View the app from [http://localhost:3000](http://localhost:3000)
+
 
