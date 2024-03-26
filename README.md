@@ -46,11 +46,11 @@
 
 1. Location not enabled from browser
 
-![location error](docs/error2.png)
+![location error](docs/error1.png)
 
 2. Server error
 
-![Server error](docs/error1.png)
+![Server error](docs/error2.png)
 
 
 ### Technology Stack:
