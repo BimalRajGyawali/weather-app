@@ -13,14 +13,12 @@
 
 ![Current Weather](docs/flow1.jpeg)
 
-<br>
 
 2. Hourly and Daily Weather Forecast
 
 ![Hourly and Daily Weather Forecast](docs/flow2.jpeg)
 
 
-<br>
 
 ### Features:
 
@@ -40,13 +38,10 @@
 
 
 
-<br>
 
 ### Technology Stack:
 1. Frontend: React JS, Material UI
 2. Backend: Python, Flask
 3. Caching: Redis
 4. Weather API: OpenWeatherMap
-
-<br>
 
