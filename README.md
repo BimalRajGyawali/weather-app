@@ -8,6 +8,8 @@
 
 [Technology Stack](#technology-stack)
 
+[Running the project](#running-the-project)
+
 
 ### High Level Feature Flow:
 
@@ -56,4 +58,14 @@
 2. Backend: Python, Flask
 3. Caching: Redis
 4. Weather API: OpenWeatherMap
+
+
+### Running the project
+
+The project can be run using following `docker-compose` command.
+
+`docker-compose up -d`
+
+View the app from [http://localhost:3000](http://localhost:3000)
+
 
