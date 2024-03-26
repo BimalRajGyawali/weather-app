@@ -62,10 +62,25 @@
 
 ### Running the project
 
-The project can be run using following `docker-compose` command.
+1. Clone the git repo
 
-`docker-compose up -d`
+```bash
+git clone https://github.com/BimalRajGyawali/weather-app.git
+```
 
-View the app from [http://localhost:3000](http://localhost:3000)
+<br>
+2. `cd` to the repo on your machine
+
+```bash
+cd /path/to/weather-app
+```
+<br>
+3. Run `docker-compose` command
+
+```bash
+docker-compose up -d
+```
+
+The app will run at [http://localhost:3000](http://localhost:3000)
 
 
