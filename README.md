@@ -4,6 +4,8 @@
 
 [Features](#features)
 
+[Response to Errors](#response-to-errors)
+
 [Technology Stack](#technology-stack)
 
 
@@ -37,6 +39,16 @@
 ![Daily Forecast](docs/feature3.png)
 
 
+### Response to Errors:
+
+
+1. Location not enabled from browser
+
+![location error](docs/error2.png)
+
+2. Server error
+
+![Server error](docs/error1.png)
 
 
 ### Technology Stack:
